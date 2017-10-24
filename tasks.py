@@ -58,7 +58,7 @@ def schedule():
             # Schedule pass in Redis
             q = alert.schedule(
                 args=[location, next_pass, iss_pass.id],
-                eta=start_pass
+                eta=pass_start
             )
 
             redis.sadd(schedule, q.task.task_id)
