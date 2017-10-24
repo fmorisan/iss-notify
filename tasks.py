@@ -10,7 +10,7 @@ import folium
 import settings
 from main import huey, redis
 from services import OneSignal
-from heavens import HeavensAbove
+from tle import SatTracker
 from schema import ISSPass, db
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ def schedule():
             continue
 
         lat, lng = location.split(',')
-        ha = HeavensAbove(lat, lng)
+        ha = SatTracker(lat, lng)
 
         for next_pass in ha.get_next_passes():
             logger.info("Scheduling ISS pass for %s" % location)
@@ -49,7 +49,8 @@ def schedule():
             iss_pass = ISSPass(
                 lat=lat,
                 lng=lng,
-                start_date=pass_start
+                start_date=pass_start,
+                path=next_pass.get('path', [])
             )
             db.add(iss_pass)
             db.commit()

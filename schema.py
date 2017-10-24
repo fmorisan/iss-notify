@@ -8,6 +8,7 @@ from sqlalchemy import (
     String,
     Float,
     DateTime,
+    PickleType,
     MetaData,
 )
 from sqlalchemy.ext.declarative import declarative_base
@@ -25,6 +26,7 @@ class ISSPass(Base):
     lat = Column("Lat", Float)
     lng = Column("Lon", Float)
     start_date = Column("StartDate", DateTime)
+    path = Column("Path", PickleType)
 
 
 if __name__=="__main__":
