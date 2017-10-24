@@ -11,6 +11,7 @@ import settings
 from main import huey, redis
 from services import OneSignal
 from heavens import HeavensAbove
+from schema import ISSPass, db
 
 logger = logging.getLogger(__name__)
 
@@ -42,10 +43,21 @@ def schedule():
         for next_pass in ha.get_next_passes():
             logger.info("Scheduling ISS pass for %s" % location)
 
+            pass_start = next_pass['start']['datetime'].replace(tzinfo=utc)
+
+            # Save pass in SQLite
+            iss_pass = ISSPass(
+                lat=lat,
+                lng=lng,
+                start_date=pass_start
+            )
+            db.add(iss_pass)
+            db.commit()
+
             # Schedule pass in Redis
             q = alert.schedule(
-                args=[location, next_pass],
-                eta=next_pass['start']['datetime'].replace(tzinfo=utc)
+                args=[location, next_pass, iss_pass.id],
+                eta=start_pass
             )
 
             redis.sadd(schedule, q.task.task_id)

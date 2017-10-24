@@ -32,11 +32,16 @@ class OneSignal(object):
 
         return response
 
-    def send_pass_notification(self, location, data, schedule=False):
+    def send_pass_notification(self, location, data, pass_id=None, schedule=False):
         start_dt = data['start']['datetime']
         end_dt = data['end']['datetime']
         duration = end_dt - start_dt
         ttl = duration.seconds
+
+        if pass_id:
+            url = 'http://iss-worker.now.sh/pass/{}'.format(pass_id)
+        else:
+            url = data['url']
 
         payload = {
             "filters": [

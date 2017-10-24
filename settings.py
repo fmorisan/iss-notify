@@ -11,3 +11,4 @@ REDIS = {
 }
 
 MAP_FILE = 'map.html'
+PASS_TEMPLATE = 'pass.html'

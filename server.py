@@ -1,9 +1,10 @@
 import bottle
-from bottle import Bottle, request, response, static_file
+from bottle import Bottle, request, response, static_file, template
 
 import settings
 from services import OneSignal
 from main import redis
+from schema import db, ISSPass
 
 app = Bottle()
 
@@ -14,8 +15,7 @@ def enable_cors():
 
 
 @app.get('/')
-def root():
-    return 'ok'
+def root(): return 'ok'
 
 
 @app.post('/subscribe')
@@ -67,5 +67,17 @@ def unsubscribe():
 def map():
     return static_file(settings.MAP_FILE, root='.')
 
+
+@app.get('/iss-pass/<pass_id>')
+def pass_data(pass_id):
+    iss_pass = db.query(ISSPass).filter(ISSPass.id==pass_id).first()
+    with open(settings.PASS_TEMPLATE, 'r') as tmpl:
+        tmpl_string = "".join(tmpl.readlines())
+    return template(tmpl_string, **iss_pass.__dict__)
+
+@app.get('/virtualsky.js')
+def static_js():
+    """Serve a copy of virtualsky.js"""
+    return static_file('virtualsky.js', root='.')
 
 app.run(host='0.0.0.0', port=8000)
