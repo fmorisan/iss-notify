@@ -39,7 +39,7 @@ class OneSignal(object):
         ttl = duration.seconds
 
         if pass_id:
-            url = 'http://iss-worker.now.sh/pass/{}'.format(pass_id)
+            url = 'http://iss-skies-worker.now.sh/iss-pass/{}'.format(pass_id)
         else:
             url = data['url']
 
@@ -55,7 +55,7 @@ class OneSignal(object):
                     az=data['highest']['az'],
                 )
             },
-            "url": data['url'],
+            "url": url,
             "ttl": ttl
         }
 
