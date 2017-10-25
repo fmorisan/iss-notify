@@ -2111,6 +2111,19 @@ for (c = 0; c < ISSPath.length; c++) {
     if (pa) {
       this.ctx.moveTo(pa.x, pa.y);
       this.ctx.lineTo(pb.x, pb.y);
+    } else {
+      var color = this.ctx.fillStyle;
+      this.ctx.fillStyle = '#0c0';
+      this.ctx.fillRect(pb.x-3, pb.y+3, 6, 6)
+      this.ctx.fillText("Start", pb.x+7, pb.y-3)
+      this.ctx.fillStyle = color;
+    }
+    if (c === ISSPath.length-1){
+      var color = this.ctx.fillStyle;
+      this.ctx.fillStyle = '#c00';
+      this.ctx.fillRect(pb.x-3, pb.y-3, 6, 6)
+      this.ctx.fillText("End", pb.x+7, pb.y-3)
+      this.ctx.fillStyle = color;
     }
     pa = pb;
 }
