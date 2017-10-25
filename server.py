@@ -1,5 +1,6 @@
 import bottle
 from bottle import Bottle, request, response, static_file, template
+import simplejson as json
 
 import settings
 from services import OneSignal
@@ -73,7 +74,13 @@ def pass_data(pass_id):
     iss_pass = db.query(ISSPass).filter(ISSPass.id==pass_id).first()
     with open(settings.PASS_TEMPLATE, 'r') as tmpl:
         tmpl_string = "".join(tmpl.readlines())
-    return template(tmpl_string, **iss_pass.__dict__)
+    ctx = {
+        "lat": iss_pass.lat,
+        "lng": iss_pass.lng,
+        "path": json.dumps(iss_pass.path),
+        "start_date": iss_pass.start_date,
+    }
+    return template(tmpl_string, **ctx)
 
 @app.get('/virtualsky.js')
 def static_js():

@@ -1922,7 +1922,6 @@ VirtualSky.prototype.draw = function(proj){
 		.drawGridlines("eq")
 		.drawGridlines("gal")
 		.drawGalaxy()
-	        .drawISSPath()
 		.drawConstellationLines()
 		.drawConstellationBoundaries()
 		.drawStars()
@@ -1930,6 +1929,7 @@ VirtualSky.prototype.draw = function(proj){
 		.drawMeridian()
 		.drawPlanets()
 		.drawMeteorShowers()
+                .drawISSPath()
 		.drawCardinalPoints();
 
 	for(var i = 0; i < this.pointers.length ; i++) this.highlight(i);
@@ -2095,28 +2095,24 @@ VirtualSky.prototype.draw = function(proj){
 } 
 VirtualSky.prototype.drawISSPath = function(colour){
 if (!colour) colour = this.col.galaxy;
-var ISSPath = [[0,0], [0.1, 0.1], [0.2, 0.3]]//TODO get data from somewhere
+var ISSPath = window.path;
 this.ctx.beginPath();
 this.ctx.strokeStyle = colour;
 this.ctx.fillStyle = colour;
 this.ctx.lineWidth = 1;
 var pa, pb, i, c, old, maxl;
 maxl = this.maxLine(1000);
-
+// Set the initial point to null
+pa = null;
 for (c = 0; c < ISSPath.length; c++) {
-    // Set the initial point to null
-    pa = null;
 
     // Loop over joining the points
-    for (i = 0; i < ISSPath.length; i++) {
-	pb = this.radec2xy(ISSPath[i][0], ISSPath[i][1]);
-	if (pa) {
-	    // Basic error checking: if the line is very long we need to normalize to other side of sky
-            this.ctx.moveTo(pa.x, pa.y);
-	    this.ctx.lineTo(pb.x, pb.y);
-	}
-	pa = pb;
+    pb = this.azel2xy(ISSPath[c][0]-(Math.PI/180)*this.az_off, ISSPath[c][1], this.wide, this.tall);
+    if (pa) {
+      this.ctx.moveTo(pa.x, pa.y);
+      this.ctx.lineTo(pb.x, pb.y);
     }
+    pa = pb;
 }
 this.ctx.stroke();
 return this;

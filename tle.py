@@ -4,6 +4,7 @@ import logging
 import requests
 
 from datetime import datetime
+from decimal import Decimal
 from math import degrees
 from utils import az_to_octant
 from collections import namedtuple
@@ -98,11 +99,10 @@ class SatTracker(object):
             self.sun.compute(self.observer)
             self.satellite.compute(self.observer)
 
-            if (not self.satellite.eclipsed and
-                -18 < degrees(self.sun.alt) < -6):
-                sky_path.append((self.satellite.ra, self.satellite.dec))
-                visible = True
-                break
+            sky_path.append(
+                (Decimal(self.satellite.az), Decimal(self.satellite.alt))
+            )
+            visible = True
 
         # set highest azimuth
         self.observer.date = _pass.max_alt_time
